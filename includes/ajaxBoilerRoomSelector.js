@@ -29,20 +29,10 @@ function boilerplateFetch( target ) {
   if ( confirmAction( target ) ) {
     var title = getSelectedTitle()
     if ( title != '' ) {
-      if ( mw != null && mw.util != null && mw.util.wikiScript ) {
-        $.get(
-	  mw.util.wikiScript(), {
-	    action: 'ajax', 
-	    rs: 'BoilerRoomSelector::ajaxGetBoilerplateContent',
-	    rsargs: [getSelectedTitle()]
-	  }
-        );
-      } else {
-        sajax_do_call( 'BoilerRoomSelector::ajaxGetBoilerplateContent', 
-		       [getSelectedTitle()], 
-		       target 
-	  	     );
-      }
+      sajax_do_call( 'BoilerRoomSelector::ajaxGetBoilerplateContent', 
+         [getSelectedTitle()], 
+         target 
+      );
     }
   }
 }

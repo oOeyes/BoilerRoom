@@ -115,7 +115,7 @@ class BoilerRoomSelector {
    * content.
   */
   static function createAjaxSelectorScript( $titles, $requestedTitle ) {
-    global $wgResourceModules, $wgbrIncludes, $wgbrUseLargeSelector, $wgScriptPath, $wgTitle;
+    global $wgbrIncludes, $wgbrUseLargeSelector, $wgScriptPath, $wgTitle, $wgOut;
     
     $legend = wfMsg( 'br-selector-legend' );
     $prepend = wfMsg( 'br-selector-prepend' );
@@ -124,13 +124,9 @@ class BoilerRoomSelector {
     $insert = wfMsg( 'br-selector-insert' );
     
     if ( class_exists( 'ResourceLoader', false ) ) {
-      $wgResourceModules['ext.ajaxBoilerRoomSelector'] = array(
-        'scripts' => $wgbrIncludes . "/ajaxBoilerRoomSelector.js"
-      );
-      $resourceLoad = "\nmw.loader.load( 'ext.ajaxBoilerRoomSelector' );";
+      $wgOut->addScriptFile( $wgScriptPath . '/extensions/BoilerRoom/includes/ajaxBoilerRoomSelector.js' );
       $extScriptTag = '';  // won't be using this
     } else {
-      $resourceLoad = ''; // don't have resource loader, so won't be using this
       $extScriptTag = '<script type="text/javascript" src="' . $wgScriptPath . 
         '/extensions/BoilerRoom/includes/ajaxBoilerRoomSelector.js"></script>' . "\n";
     }
@@ -142,7 +138,7 @@ class BoilerRoomSelector {
     
     if ( $wgbrUseLargeSelector ) {
       $output =<<<ENDSTARTFORM
-{$extScriptTag}<script type="text/javascript">{$resourceLoad}{$displayMsg}
+{$extScriptTag}<script type="text/javascript">{$displayMsg}
 var boilerRoomSelectorContainer = document.getElementById("boilerRoomSelectorContainer");
 boilerRoomSelectorContainer.innerHTML =
   '<fieldset class="boilerRoomFieldSet" style="clear: both;">\\n' +

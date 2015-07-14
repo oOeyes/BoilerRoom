@@ -26,7 +26,7 @@ $wgExtensionCredits[ 'other' ][] = array(
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
   'author'         => '[http://www.mediawiki.org/wiki/User:OoEyes Shawn Bruckner]',
-  'version'        => '1.0',
+  'version'        => '1.01',
 );
 
 $wgbrIncludes = dirname( __FILE__ ) . '/includes';
