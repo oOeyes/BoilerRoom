@@ -25,7 +25,7 @@ $wgExtensionCredits[ 'other' ][] = array(
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
   'author'         => 'Eyes',
-  'version'        => '0.92',
+  'version'        => '0.93',
 );
 
 $wgbrIncludes = dirname( __FILE__ ) . '/includes';
@@ -37,12 +37,12 @@ $wgbrIncludes = dirname( __FILE__ ) . '/includes';
  *       Specifies at what index to create the Boilerplate namespace this extension
  *       uses to store boilerplates.  Needs to be changed if you have other extensions
  *       that create custom namespaces or have any custom namespaces of your own,
- *       unless, of course, they don't use indexes 300 or 301.
+ *       unless, of course, they don't use indexes 450 or 451.
  *       Set this BEFORE including this file in LocalSettings.php!
  *       
  */
 if ( !isset( $wgbrNamespaceIndex ) )
-  $wgbrNamespaceIndex = 300;
+  $wgbrNamespaceIndex = 450;
 
 /**
  * Perform setup tasks.
