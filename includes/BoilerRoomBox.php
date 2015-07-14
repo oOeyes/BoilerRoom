@@ -110,31 +110,34 @@ class BoilerRoomBox {
     
     $submit = htmlspecialchars( $wgScript );
 
-    if ( isset( $params['align'] ) )
-      $style = ' style="text-align: ' . $params['align'] . '"'; 
-    else
-      $style = '';
+    $style = '';
+    if ( isset( $params['align'] ) ) {
+      $align = self::validateAlign( $params['align'] );
+      if ( $align )
+        $style = ' style="text-align: ' . $align . '"'; 
+    }      
 
     $boilerplate = '';
     if ( isset( $params['boilerplate'] ) ) {
       $boilerplate = "\n" . '<input type="hidden" name="boilerplate" value="';
-      $boilerplate .= 
-        BoilerplateNamespaces::boilerplateTitleFromText( $params['boilerplate'], false );
+      $boilerplate .= htmlspecialchars(
+        BoilerplateNamespaces::boilerplateTitleFromText( $params['boilerplate'], false ) );
       $boilerplate .= '" />';
     }
     
     if ( isset( $params['label'] ) )
-      $label = $params['label'];
+      $label = htmlspecialchars( $params['label'] );
     else
-      $label = wfMsg('br-default-box-label');
+      $label = wfMsg( 'br-default-box-label' );
       
-    if ( isset( $params['title'] ) )
-      $title = str_replace( '_', ' ', $params['title']);
-    else
+    if ( isset( $params['title'] ) ) {
+      $title = htmlspecialchars( str_replace( '_', ' ', $params['title'] ) );
+    } else {
       $title = "";
+    }
       
-    if ( isset( $params['width'] ) )
-      $width = $params['width'];
+    if ( isset( $params['width'] ) && intval( $params['width'] ) > 0 )
+      $width = intval( $params['width'] );
     else
       $width = "30";
 
@@ -143,11 +146,32 @@ class BoilerRoomBox {
 <form name="boilerRoomBox" action="{$submit}" method="get" class="boilerRoomBoxForm">
 <input type="hidden" name="action" value="edit" />{$boilerplate}
 <input class="boilerRoomBoxInput" name="title" type="text" value="{$title}" size="{$width}" />
-<input type='submit' class="boilerRoomBoxButton" value="{$label}" />
+<input type="submit" class="boilerRoomBoxButton" value="{$label}" />
 </form></div>
 ENDFORM;
 
-  return $output;
+    return $output;
+  }
+  
+  /**
+   * Validates an alignment value for the text-align property, returning just the alignment
+   * value in lower case if it's valid and false it is invalid.
+  */
+  static function validateAlign( $align ) {    
+    switch ( trim( strtolower( $align ) ) ) {
+      case "center":
+        return "center";
+      case "left":
+        return "left";
+      case "right":
+        return "right";
+      case "justify":
+        return "justify";
+      case "inherit":
+        return "inherit";
+      default:
+        return false;
+    }
   }
 }
 

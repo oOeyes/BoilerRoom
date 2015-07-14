@@ -25,7 +25,7 @@ $wgExtensionCredits[ 'other' ][] = array(
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
   'author'         => 'Eyes',
-  'version'        => '0.91',
+  'version'        => '0.92',
 );
 
 $wgbrIncludes = dirname( __FILE__ ) . '/includes';
