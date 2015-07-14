@@ -22,7 +22,14 @@ class BoilerRoomBox {
    * @return bool true to indicate no problems.
    */
   static public function preloadBoilerplateOnNewPage( &$textbox, &$title ) {
-    $textbox = self::getBoilerplateContent();
+    $text = self::getBoilerplateContent();
+    if ( $text ) {
+      if ( $textbox ) {
+        $textbox = $textbox . "\n\n" . $text;
+      } else {
+        $textbox = $text;
+      }
+    } 
     
     return true;
   }

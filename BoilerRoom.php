@@ -11,7 +11,7 @@
  * @link 
  *
  * @author Eyes <eyes@aeongarden.com>
- * @copyright Copyright � 2011 Eyes
+ * @copyright Copyright � 2011-2013 Eyes
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
@@ -26,7 +26,7 @@ $wgExtensionCredits[ 'other' ][] = array(
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
   'author'         => '[http://www.mediawiki.org/wiki/User:OoEyes Shawn Bruckner]',
-  'version'        => '1.2',
+  'version'        => '1.21',
 );
 
 /**
