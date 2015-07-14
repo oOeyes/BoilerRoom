@@ -127,7 +127,7 @@ class BoilerRoomSelector {
                             "useLargeSelector:" . ( $wgbrUseLargeSelector ? "true" : "false" ) . "," .
                             "showExistenceMessage:" . ( $showExistenceMessage ? "true" : "false" ) . "," .
                             "standardHtmlList:'" . $htmlOptions . "'," .
-                            "});boilerRoom.initializeAjaxSelector();});" . Xml::closeElement( 'script' )
+                            "});boilerRoom.initializeAjaxSelector();});"
     );
     
     $wgOut->addModuleScripts( 'ext.BoilerRoom.ajaxSelector' );
