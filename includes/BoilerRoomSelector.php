@@ -30,9 +30,12 @@ class BoilerRoomSelector {
     global $wgUseAjax, $wgTitle, $wgbrUseLargeSelector;
     
     $requestedBoilerplateTitle = BoilerplateNamespace::getRequestedBoilerplateTitle();
-    $options = self::optionsFromBoilerplateList( BoilerplateNamespace::getAllBoilerplateTitles(),
-                                                 BoilerplateNamespace::getRequestedBoilerplateTitle()
-                                               );
+    $titles = BoilerplateNamespace::getAllBoilerplateTitles();
+    $htmlOptions = self::optionsFromBoilerplateList( $titles,
+                                                     BoilerplateNamespace::getRequestedBoilerplateTitle()
+                                                   );
+    $jsonOptions = self::wikiEditorListFromBoilerplateList( $titles );
+    
     $pageExists = $wgTitle->exists();
     $showExistenceMessage = $pageExists && (bool)$requestedBoilerplateTitle;
     
@@ -40,7 +43,7 @@ class BoilerRoomSelector {
     if ( $options != "''" ) {
       if ( $wgUseAjax ) {
         $message = self::getInitialMessage( $requestedBoilerplateTitle, false );
-        $ajaxSelector =  self::createAjaxSelectorScript( $options, $showExistenceMessage );
+        $ajaxSelector =  self::createAjaxSelectorScript( $htmlOptions, $jsonOptions, $showExistenceMessage );
         if ( !$pageExists ) {
           $noScriptSelector .= self::createNoscriptSelector( true, $options );
         }        
@@ -103,32 +106,36 @@ class BoilerRoomSelector {
    * @global bool $wgbrUseLargeSelector True to the use the large AJAX selector.
    * @global string $wgScriptPath The path to the MediaWiki installation base folder.
    * @global OutputPage $wgOUt The output page object to add the static scripts to.
-   * @param Array $options The list of boilerplates that can be selected.
+   * @param String $htmlOptions The list of boilerplates that can be selected in HTML format.
+   * @param String $jsonOptions The list of bollerplates that can be selected in a JSON format for WikiEditor.
    * @param bool $showExistenceMessage true to show the message that the page already exists.
    * @return string The dynamic HTML and Javascript needed for the selector.
    */
-  static private function createAjaxSelectorScript( $options, $showExistenceMessage ) {
+  static private function createAjaxSelectorScript( $htmlOptions, $jsonOptions, $showExistenceMessage ) {
     global $wgbrUseLargeSelector, $wgScriptPath, $wgOut;
+          
+    $wgOut->addInlineScript("$(document).ready(function(){boilerRoom.addMessages({" .
+                            "pageExistsAjaxMsg:'"  . wfMessage( 'br-page-exists-ajax' )->text() . "'," .
+                            "prependMsg:'"  . wfMessage( 'br-prepend' )->text() . "'," .
+                            "appendMsg:'"  . wfMessage( 'br-append' )->text() . "'," .
+                            "replaceMsg:'"  . wfMessage( 'br-replace' )->text() . "'," .
+                            "insertMsg:'"  . wfMessage( 'br-insert' )->text() . "'," .
+                            "selectorLegend:'" . wfMessage( 'br-selector-legend' )->text() . "'," .
+                            "selectorInsert:'" . wfMessage( 'br-selector-insert' )->text() . "'," .
+                            "selectorReplace:'" . wfMessage( 'br-selector-replace' )->text() . "'," .
+                            "selectorPrepend:'" . wfMessage( 'br-selector-prepend' )->text() . "'," .
+                            "selectorAppend:'" . wfMessage( 'br-selector-append' )->text() . "'" .
+                            "});boilerRoom.addState({" . 
+                            "useLargeSelector:" . ( $wgbrUseLargeSelector ? "true" : "false" ) . "," .
+                            "showExistenceMessage:" . ( $showExistenceMessage ? "true" : "false" ) . "," .
+                            "standardHtmlList:'" . $htmlOptions . "'," .
+                            "wikiEditorSelectList:" . $jsonOptions .
+                            "});boilerRoom.initializeAjaxSelector();});" . Xml::closeElement( 'script' )
+    );
     
     $wgOut->addModuleScripts( 'ext.BoilerRoom.ajaxSelector' );
     
-    return Xml::element( 'div', Array( 'id' => 'boilerRoomSelectorContainer' ), '', false ) .
-           Xml::openElement( 'script', Array( 'type' => 'text/javascript') ) .
-           "var wgbrPageExistsAjaxMsg='"  . wfMessage( 'br-page-exists-ajax' )->text() . "'; " .
-           "var wgbrPrependMsg='"  . wfMessage( 'br-prepend' )->text() . "'; " .
-           "var wgbrAppendMsg='"  . wfMessage( 'br-append' )->text() . "'; " .
-           "var wgbrReplaceMsg= '"  . wfMessage( 'br-replace' )->text() . "'; " .
-           "var wgbrInsertMsg='"  . wfMessage( 'br-insert' )->text() . "'; " .
-           "var wgbrScriptPath='" . $wgScriptPath . "'; " .
-           "function initializeBoilerRoom() {".
-           "initializeAjaxSelector(" . ( $wgbrUseLargeSelector ? 'true' : 'false' ) .
-           "," . ( $showExistenceMessage ? 'true' : 'false' ) . ",'" . $options . "'," . 
-           "'" . wfMessage( 'br-selector-legend' )->text() . "'," .
-           "'" . wfMessage( 'br-selector-insert' )->text() . "'," .
-           "'" . wfMessage( 'br-selector-replace' )->text() . "'," .
-           "'" . wfMessage( 'br-selector-prepend' )->text() . "'," .
-           "'" . wfMessage( 'br-selector-append' )->text() . "');}" .
-           Xml::closeElement( 'script' );
+    return Xml::element( 'div', Array( 'id' => 'boilerRoomSelectorContainer' ), '', false );
   }
   
   /**
@@ -208,6 +215,19 @@ class BoilerRoomSelector {
     }
     
     return $output;
+  }
+  
+  /**
+   * Converts an array of boilerplate titles into a JSON string for adding to a wikiEditor select.
+   * @param Array $titles The list of boilerplate titles to serve as options, sans namespace.
+   */
+  static private function wikiEditorListFromBoilerplateList( $titles ) {
+    foreach ( $titles as $title ) {
+      $items[] = "'" . str_replace( ' ', '_', $title ) . "':{'label':'" . $title . "'," .
+                 "'action':{'type':'callback','execute':function(){}}}";
+    }
+    
+    return "{" . implode( ',', $items ) . "}";
   }
 }
 
