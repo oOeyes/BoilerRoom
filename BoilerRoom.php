@@ -25,7 +25,7 @@ $wgExtensionCredits[ 'other' ][] = array(
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
   'author'         => 'Eyes',
-  'version'        => '0.9',
+  'version'        => '0.91',
 );
 
 $wgbrIncludes = dirname( __FILE__ ) . '/includes';
@@ -52,12 +52,12 @@ $wgExtensionMessagesFiles['boilerroom'] = dirname( __FILE__ ) . '/BoilerRoom.i18
 require_once( $wgbrIncludes . '/BoilerplateNamespaces.php' );
 BoilerplateNamespaces::initialize();
 
-require_once( $wgbrIncludes . '/BoilerRoomTag.php' );
-$tagParser = new BoilerRoomTag;
+require_once( $wgbrIncludes . '/BoilerplateTag.php' );
+$tagParser = new BoilerplateTag;
 
 // Make sure the BoilerRoom classes are loaded early
 $wgAutoloadClasses['BoilerplateNamespace'] = $wgbrIncludes . '/BoilerplateNamespaces.php';
-$wgAutoloadClasses['BoilerRoomTag'] = $wgbrIncludes . '/BoilerRoomTag.php';
+$wgAutoloadClasses['BoilerplateTag'] = $wgbrIncludes . '/BoilerplateTag.php';
 #$wgAutoloadClasses['BoilerRoomTransclude'] = $wgbrIncludes . '/BoilerRoomTransclude.php';
 $wgAutoloadClasses['BoilerRoomBox'] = $wgbrIncludes . '/BoilerRoomBox.php';
 $wgAutoloadClasses['BoilerRoomSelector'] = $wgbrIncludes . '/BoilerRoomSelector.php';

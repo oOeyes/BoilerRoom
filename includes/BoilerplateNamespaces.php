@@ -87,7 +87,7 @@ class BoilerplateNamespaces {
 
       if ( isset( $boilerplateTitle ) && $boilerplateTitle->exists() ) {
         $boilerplate = Article::newFromId( $boilerplateTitle->getArticleId() );
-        $boilerplateParser = new BoilerRoomTag;
+        $boilerplateParser = new BoilerplateTag;
         $boilerplateParser->trisectText( $boilerplate->getRawText() );
         return $boilerplateParser->getContent();
       } else {

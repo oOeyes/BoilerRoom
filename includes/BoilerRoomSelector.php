@@ -28,6 +28,7 @@ class BoilerRoomSelector {
     
     $requestedBoilerplateTitle = BoilerplateNamespaces::getRequestedBoilerplateTitle();
     
+    $selector = '';
     if ( count( $boilerplateTitles ) > 0 ) {
       if ( $wgUseAjax ) {
         $selector = self::createMsgVars() . 
@@ -143,7 +144,7 @@ ENDSTARTFORM;
   'onclick="boilerplateFetch( boilerplatePrepend );">{$prepend}</button>\\n' +
   '<button class="boilerRoomButton" style="width: 100%;" ' +
   'onclick="boilerplateFetch( boilerplateAppend );">{$append}</button>\\n' +
-  '<button class="boilerBeginRoomButton" style="width: 100%;" ' +
+  '<button class="boilerRoomButton" style="width: 100%;" ' +
   'onclick="boilerplateFetch( boilerplateReplace );">{$replace}</button>\\n' +
   '</td></tr></table>\\n' +
   '</fieldset>';

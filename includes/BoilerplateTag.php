@@ -4,21 +4,21 @@
  * <boilerroom> is used to delimit the actual text of a boilerplate in a boilerplate
  * article.  To avoid the need for any text escaping, it functions in a non-compliant way.
  *
- * Everything between the first <boilerroom> on a page to the last </boilerroom> is considered
+ * Everything between the first <boilerplate> on a page to the last </boilerplate> is considered
  * to be inside the tag, regardless of if standard XML or HTML tag parser would consider that
  * to be all inside the tag.
  *
  * Additionally, the actual content begins immediately after the first newline after the first
- * <boilerroom> tag nd ends immediately before the newline before the last </boilerroom> tag.
+ * <boilerplate> tag nd ends immediately before the newline before the last </boilerplate> tag.
  *
  * @author Eyes <eyes@aeongarden.com>
  * @copyright Copyright © 2011 Eyes
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
-class BoilerRoomTag {
-  const OPENING_TAG_LENGTH = 12;
-  const CLOSING_TAG_LENGTH = 13;
+class BoilerplateTag {
+  const OPENING_TAG_LENGTH = 13;
+  const CLOSING_TAG_LENGTH = 14;
   
   /**
    * private
@@ -30,18 +30,18 @@ class BoilerRoomTag {
   var $mTemplateCallback;
   
   /**
-   * Adds the parser hook for the <boilerroom> tag, though this is done just to
+   * Adds the parser hook for the <boilerplate> tag, though this is done just to
    * register the tag with MediaWiki, as the tag is actually processed in the
    * ParserBeforeStrip hook and in the template callback set up by this function.
   */
   function initialize( Parser &$parser ) {
-    $parser->setHook( 'boilerroom', array( $this, 'processTag') );
+    $parser->setHook( 'boilerplate', array( $this, 'processTag') );
     $this->mPreprocessTemplate = array( $this, 'processTemplate' );
     return true;
   }
   
   /**
-   * Returns the boilerplate content within the <boilerroom> tag.
+   * Returns the boilerplate content within the <boilerplate> tag.
   */
   function getContent( ) {
     return $this->mContent;
@@ -97,11 +97,11 @@ class BoilerRoomTag {
   
   /**
    * This function divides the text into header, content, and footer as divided by the
-   * <boilerroom> tag, assigning them to the private member variables.
+   * <boilerplate> tag, assigning them to the private member variables.
   */
   function trisectText( $text ) {
-    $startOpeningTag = strpos( $text, '<boilerroom>' );  // find first opening tag
-    $endClosingTag = strrpos( $text, '</boilerroom>' );  // find last closing tag
+    $startOpeningTag = strpos( $text, '<boilerplate>' );  // find first opening tag
+    $endClosingTag = strrpos( $text, '</boilerplate>' );  // find last closing tag
     
     if ( ($startOpeningTag !== false && $endClosingTag !== false) &&
         $startOpeningTag < $endClosingTag ) {
