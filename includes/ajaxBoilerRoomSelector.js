@@ -52,7 +52,9 @@ function boilerplateFetch( target ) {
  * Simply returns true for prepending and appending.
 */
 function confirmAction( target ) {
-  if ( target == boilerplatePrepend )
+  if ( target == boilerplateInsert )
+    return true;
+  else if ( target == boilerplatePrepend )
     return true;
   else if ( target == boilerplateAppend )
     return true;
@@ -62,6 +64,16 @@ function confirmAction( target ) {
                   );
   else
     return false;  // shouldn't get here.
+}
+
+/**
+ * Prepends the indicated content to the content within the edit box.
+*/
+function boilerplateInsert( content ) {
+  var editarea = document.getElementById("wpTextbox1");
+  insertAtCursor( editarea, content.responseText );
+  document.getElementById('boilerRoomMessage').innerHTML =
+    wgbrInsertMsg.replace('$1', getSelectedTitle() );
 }
 
 /**
@@ -92,4 +104,23 @@ function boilerplateReplace( content ) {
   editarea.value = content.responseText;
   document.getElementById('boilerRoomMessage').innerHTML =
     wgbrReplaceMsg.replace('$1', getSelectedTitle() );
+}
+
+ /**
+  * Performs the steps needed to insert text at the cursor position in a
+  * textarea.
+ */
+function insertAtCursor( textarea, text ) {
+  if (document.selection) {
+    textarea.focus();
+    selection = document.selection.createRange();
+    selection.text = text;
+  } else if (textarea.selectionStart || textarea.selectionStart == '0') {
+    var start = textarea.selectionStart;
+    var end = textarea.selectionEnd;
+    textarea.value = textarea.value.substring(0, start) + text + 
+      textarea.value.substring(end, textarea.value.length);
+  } else {
+    textarea.value += text;
+  }
 }
