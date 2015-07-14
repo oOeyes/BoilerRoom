@@ -8,8 +8,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
  
-$messages = array();
-$messages['en'] = array(
+$messages = Array();
+$messages['en'] = Array(
   'boilerroom-desc'       => 'Allows wiki users to create boilerplate text in the Boilerplate ' . 
                              'namespace which can then be used on new pages.',
   'br-default-box-label'  => 'Edit',
@@ -27,5 +27,10 @@ $messages['en'] = array(
   'br-append'             => 'Text from "$1" inserted at end of text.',
   'br-replace'            => 'Text from "$1" used to replace existing text.',
   'br-load-boilerplate'   => 'Load boilerplate',
+);
+
+$magicWords = Array();
+$magicWords['en'] = Array(
+  'MAG_BOILERROOMBOX'     => Array( 0, 'boilerroombox', 'brbox' )
 );
 ?>

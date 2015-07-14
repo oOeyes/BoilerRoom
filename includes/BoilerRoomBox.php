@@ -10,15 +10,18 @@
  * with the {{boilerroombox}} or {{brbox}} parser functions.
  * 
  * @author Eyes <eyes@aeongarden.com>
- * @copyright Copyright © 2011 Eyes
+ * @copyright Copyright ï¿½ 2011 Eyes
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
 class BoilerRoomBox {
   /**
    * Preloads a boilerplate if one was requested when editing a new page.
-  */
-  static function preloadBoilerplateOnNewPage( &$textbox, &$title ) {
+   * @param string $textbox Content to prefill textbox with.
+   * @param Title $title The title of the new page. Value is ignored.
+   * @return bool true to indicate no problems.
+   */
+  static public function preloadBoilerplateOnNewPage( &$textbox, &$title ) {
     $textbox = self::getBoilerplateContent();
     
     return true;
@@ -27,24 +30,26 @@ class BoilerRoomBox {
   /**
    * Returns the content of the boilerplate identified in the web request, or an 
    * empty string if the boilerplate does not exist or if no boilerplate was requested.
-  */
-  static function getBoilerplateContent( ) {
+   * @global $wgRequest The web request object.
+   * @return The content of the boilerplate identified in the 'boilerplate' web request param
+   */
+  static public function getBoilerplateContent( ) {
     global $wgRequest;
     
     if ( $wgRequest->getText( 'boilerplate' ) ) {
-      return BoilerplateNamespaces::getBoilerplateContent( 
-        $wgRequest->getText( 'boilerplate' ) );
+      return BoilerplateNamespace::getBoilerplateContent( $wgRequest->getText( 'boilerplate' ) );
     } else {
       return "";
     }
   }
   
   /**
-   * Registers the {{#boilerroombox}} parser function and the 
-   * <boilerroombox> and <brbox> tags with the parser.
-  */
-  static function parserFunctionAndTagSetup( &$parser ) {
-    $parser->setFunctionHook( 'boilerroombox', 
+   * Registers the {{#boilerroombox}} parser function and the <boilerroombox> and <brbox> tags with the parser.
+   * @param Parser $parser The parser object being initialized.
+   * @return bool true to indicate no problems.
+   */
+  static public function parserFunctionAndTagSetup( &$parser ) {
+    $parser->setFunctionHook( 'MAG_BOILERROOMBOX', 
                               'BoilerRoomBox::parserFunctionRender', 
                               SFH_OBJECT_ARGS 
                             );
@@ -54,20 +59,15 @@ class BoilerRoomBox {
   }
 
   /**
-   * Registers the {{#boilerroombox}} and {{#brbox}} magic words with
-   * the parser.
-  */
-  static function parserFunctionMagic( &$magicWords, $langCode ) {
-    $magicWords['boilerroombox'] = array( 0, 'boilerroombox', 'brbox' );
-    return true;
-  }
-
-  /**
-   * This function converts the parameters to the parser function into an
-   * array form and outputs the completed form as unparsed HTML.
-  */
-  static function parserFunctionRender( $parser, $frame, $unexpandedParams ) {
-    $params = array();
+   * This function converts the parameters to the parser function into an array form and outputs the completed form 
+   * as unparsed HTML.
+   * @param Parser $parser The parser object. Ignored.
+   * @param PPFrame $frame The parser frame object.
+   * @param Array $unexpandedParams The parameters and values together, not yet exploded or trimmed.
+   * @return Array The function output along with relevent parser options.
+   */
+  static public function parserFunctionRender( $parser, $frame, $unexpandedParams ) {
+    $params = Array();
     foreach ( $unexpandedParams as $unexpandedParam ) {
       $param = explode( '=', trim( $frame->expand( $unexpandedParam ) ), 2 );
       if ( count( $param ) == 2 ) {
@@ -77,7 +77,7 @@ class BoilerRoomBox {
       }
     }
     
-    return array( self::renderOutput( $params ), 
+    return Array( self::renderOutput( $params ), 
                   'noparse' => true, 
                   'isHTML' => true 
                 );
@@ -86,9 +86,14 @@ class BoilerRoomBox {
   /**
    * This function converts the contents of the tag into an array of parameters
    * and outputs the completed form as unparsed HTML.
-  */
-  static function tagRender( $input, array $args, Parser $parser, PPFrame $frame ) {
-    $params = array();
+   * @param string $inout The input content, not yet processed or split.
+   * @param Array $args The attributes. This isn't used.
+   * @param Parser $parser The Parser object. Ignored.
+   * @param PPFrame $frame The parser frame object. Ignored.
+   * @return string The tag's output.
+   */
+  static public function tagRender( $input, Array $args, Parser $parser, PPFrame $frame ) {
+    $params = Array();
     $lines = explode( "\n", $input );
     foreach ( $lines as $line ) {
       $param = explode( '=', trim( $line ) );
@@ -104,8 +109,11 @@ class BoilerRoomBox {
   
   /**
    * This function creates the boilerplate form and returns it.
-  */
-  static function renderOutput( $params ) {
+   * @global $wgScript The path to index.php.
+   * @param Array $params An array of the parameter values keyed by parameter name.
+   * @return The boiler room box form according to the parameters.
+   */
+  static private function renderOutput( $params ) {
     global $wgScript;
     
     $submit = htmlspecialchars( $wgScript );
@@ -114,24 +122,25 @@ class BoilerRoomBox {
     if ( isset( $params['align'] ) ) {
       $align = self::validateAlign( $params['align'] );
       if ( $align )
-        $style = ' style="text-align: ' . $align . '"'; 
+        $style = 'text-align: ' . $align; 
     }      
 
     $boilerplate = '';
     if ( isset( $params['boilerplate'] ) ) {
-      $boilerplate = "\n" . '<input type="hidden" name="boilerplate" value="';
-      $boilerplate .= htmlspecialchars(
-        BoilerplateNamespaces::boilerplateTitleFromText( $params['boilerplate'], false ) );
-      $boilerplate .= '" />';
+      $boilerplate = Xml::input( 'boilerplate', 
+                                 false, 
+                                 BoilerplateNamespace::boilerplateTitleFromText( $params['boilerplate'], false ), 
+                                 Array( 'type' => 'hidden' )
+                               );
     }
     
-    if ( isset( $params['label'] ) )
-      $label = htmlspecialchars( $params['label'] );
+    if ( isset( $params['label'] ) && $params['label'] !== '' )
+      $label = $params['label'];
     else
-      $label = wfMsg( 'br-default-box-label' );
+      $label = wfMessage( 'br-default-box-label' )->text();
       
     if ( isset( $params['title'] ) ) {
-      $title = htmlspecialchars( str_replace( '_', ' ', $params['title'] ) );
+      $title = str_replace( '_', ' ', $params['title'] );
     } else {
       $title = "";
     }
@@ -139,16 +148,27 @@ class BoilerRoomBox {
     if ( isset( $params['width'] ) && intval( $params['width'] ) > 0 )
       $width = intval( $params['width'] );
     else
-      $width = "30";
+      $width = 30;
 
-    $output = <<<ENDFORM
-<div class="boilerRoomBox"{$style}>
-<form name="boilerRoomBox" action="{$submit}" method="get" class="boilerRoomBoxForm">
-<input type="hidden" name="action" value="edit" />{$boilerplate}
-<input class="boilerRoomBoxInput" name="title" type="text" value="{$title}" size="{$width}" />
-<input type="submit" class="boilerRoomBoxButton" value="{$label}" />
-</form></div>
-ENDFORM;
+    $output = Xml::openElement( 'div', Array( 'class' => 'boilerRoomBox',
+                                              'style' => $style,
+                                            ) 
+                              ) .
+              Xml::openElement( 'form', Array( 'name'    => 'boilerRoomBox',
+                                               'action'  => $submit,
+                                               'method'  => 'get',
+                                               'class'   => 'boilerRoomBoxForm',
+                                             ) 
+                              ) .
+              Xml::input( 'action', false, 'edit', Array( 'type' => 'hidden' ) ) .
+              $boilerplate .
+              Xml::input( 'title', $width, $title, Array( 'type'   => 'text',
+                                                          'class'  => 'boilerRoomBoxInput',
+                                                        ) 
+                        ) .
+              Xml::submitButton( $label, Array( 'class' => 'boilerRoomBoxButton' ) ) .
+              Xml::closeElement( 'form ') .
+              Xml::closeElement( 'div' );
 
     return $output;
   }
@@ -156,8 +176,10 @@ ENDFORM;
   /**
    * Validates an alignment value for the text-align property, returning just the alignment
    * value in lower case if it's valid and false it is invalid.
-  */
-  static function validateAlign( $align ) {    
+   * @param $align The user-provided alignment value.
+   * @return A safe alignment value if possible, or false.
+   */
+  static private function validateAlign( $align ) {    
     switch ( trim( strtolower( $align ) ) ) {
       case "center":
         return "center";

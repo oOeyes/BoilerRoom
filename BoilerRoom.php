@@ -26,10 +26,8 @@ $wgExtensionCredits[ 'other' ][] = array(
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
   'author'         => '[http://www.mediawiki.org/wiki/User:OoEyes Shawn Bruckner]',
-  'version'        => '1.01',
+  'version'        => '1.1',
 );
-
-$wgbrIncludes = dirname( __FILE__ ) . '/includes';
 
 /**
  * Options:
@@ -57,29 +55,32 @@ if ( !isset( $wgbrUseLargeSelector ) )
 */
 $wgExtensionMessagesFiles['boilerroom'] = dirname( __FILE__ ) . '/BoilerRoom.i18n.php';
 
-require_once( $wgbrIncludes . '/BoilerplateNamespaces.php' );
-BoilerplateNamespaces::initialize();
+require_once( dirname( __FILE__ ) . '/includes/BoilerplateNamespace.php' );
+BoilerplateNamespace::initialize();
 
-require_once( $wgbrIncludes . '/BoilerplateTag.php' );
+require_once( dirname( __FILE__ ) . '/includes/BoilerplateTag.php' );
 $tagParser = new BoilerplateTag;
 
-// Make sure the BoilerRoom classes are loaded early
-$wgAutoloadClasses['BoilerplateNamespace'] = $wgbrIncludes . '/BoilerplateNamespaces.php';
-$wgAutoloadClasses['BoilerplateTag'] = $wgbrIncludes . '/BoilerplateTag.php';
-#$wgAutoloadClasses['BoilerRoomTransclude'] = $wgbrIncludes . '/BoilerRoomTransclude.php';
-$wgAutoloadClasses['BoilerRoomBox'] = $wgbrIncludes . '/BoilerRoomBox.php';
-$wgAutoloadClasses['BoilerRoomSelector'] = $wgbrIncludes . '/BoilerRoomSelector.php';
+$wgAutoloadClasses['BoilerplateNamespace'] = dirname( __FILE__ ) . '/includes/BoilerplateNamespace.php';
+$wgAutoloadClasses['ApiQueryBoilerplate'] = dirname( __FILE__ ) . '/includes/ApiQueryBoilerplate.php';
+$wgAutoloadClasses['BoilerplateTag'] = dirname( __FILE__ ) . '/includes/BoilerplateTag.php';
+#$wgAutoloadClasses['BoilerRoomTransclude'] = dirname( __FILE__ ) . '/includes/BoilerRoomTransclude.php';
+$wgAutoloadClasses['BoilerRoomBox'] = dirname( __FILE__ ) . '/includes/BoilerRoomBox.php';
+$wgAutoloadClasses['BoilerRoomSelector'] = dirname( __FILE__ ) . '/includes/BoilerRoomSelector.php';
 
-$wgHooks['ParserFirstCallInit'][] = array($tagParser, 'initialize');
-$wgHooks['ParserBeforeStrip'][] = array($tagParser, 'processPage');
+$wgHooks['ParserFirstCallInit'][] = Array( $tagParser, 'initialize' );
+$wgHooks['ParserBeforeStrip'][] = Array( $tagParser, 'processPage' );
 $wgHooks['EditFormPreloadText'][] = 'BoilerRoomBox::preloadBoilerplateOnNewPage';
 
 $wgHooks['ParserFirstCallInit'][] = 'BoilerRoomBox::parserFunctionAndTagSetup';
-$wgHooks['LanguageGetMagic'][]       = 'BoilerRoomBox::parserFunctionMagic';
 
 $wgHooks['EditPageBeforeEditToolbar'][] = 'BoilerRoomSelector::renderOutput';
 
-require_once( $wgbrIncludes . '/BoilerRoomSelector.php' );
-$wgAjaxExportList[] = 'BoilerRoomSelector::ajaxGetBoilerplateContent';
+$wgAPIModules['boilerplate'] = "ApiQueryBoilerplate";
+
+$wgResourceModules['ext.BoilerRoom.ajaxSelector'] = array(
+  'scripts' => 'includes/ajaxBoilerRoomSelector.js',
+  'localBasePath' => dirname( __FILE__ ),
+);
 
 ?>
