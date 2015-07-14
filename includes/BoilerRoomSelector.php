@@ -11,7 +11,7 @@
  * Otherwise, the one-button selector will only appear when editing a new page.
  *
  * @author Eyes <eyes@aeongarden.com>
- * @copyright Copyright © 2011 Eyes
+ * @copyright Copyright ï¿½ 2011 Eyes
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
@@ -23,20 +23,21 @@ class BoilerRoomSelector {
    * Boilerplate namespace.
   */
   static function renderOutput( &$toolbar ) {
-    global $wgUseAjax, $wgTitle;
+    global $wgUseAjax, $wgTitle, $wgbrUseLargeSelector;
     $boilerplateTitles = BoilerplateNamespaces::getAllBoilerplateTitles();
     
     $requestedBoilerplateTitle = BoilerplateNamespaces::getRequestedBoilerplateTitle();
     
+    $message = '';
     $selector = '';
     if ( count( $boilerplateTitles ) > 0 ) {
       if ( $wgUseAjax ) {
-        $selector = self::createMsgVars() . 
-                    self::getInitialMessage( $requestedBoilerplateTitle, false ) . 
-                    '<div id="boilerRoomSelectorContainer"></div>';
-        $selector .= self::createAjaxSelectorScript( $boilerplateTitles, 
-                                                     $requestedBoilerplateTitle 
-                                                   );
+        $message = self::createMsgVars() . 
+                   self::getInitialMessage( $requestedBoilerplateTitle, false );
+        $selector = '<div id="boilerRoomSelectorContainer"></div>' . 
+                    self::createAjaxSelectorScript( $boilerplateTitles, 
+                                                    $requestedBoilerplateTitle 
+                                                  );
         if ( !$wgTitle->exists() ) {
           $selector .= self::createNoscriptSelector( true, 
                                                      $boilerplateTitles,
@@ -45,16 +46,21 @@ class BoilerRoomSelector {
         }        
       } else {
         if ( !$wgTitle->exists() ) {
-          $selector = self::getInitialMessage( $requestedBoilerplateTitle, true );
+          $message = self::getInitialMessage( $requestedBoilerplateTitle, true );
           $selector .= self::createNoscriptSelector( false, 
-                                                    $boilerplateTitles,
-                                                    $requestedBoilerplateTitle
-                                                  );
+                                                     $boilerplateTitles,
+                                                     $requestedBoilerplateTitle
+                                                   );
         }
       }
     }
     
-    $toolbar = $selector . $toolbar;
+    if ( $wgbrUseLargeSelector || !$wgUseAjax ) {
+      $toolbar = $message . $selector . $toolbar;
+    } else {
+      $toolbar = $message . str_replace( "</div>", "", $toolbar ) . $selector . "</div>";
+    }
+    
     return true;
   }
   
@@ -62,20 +68,28 @@ class BoilerRoomSelector {
    * Returns a message to display depending on the circumstances.
   */
   static function getInitialMessage( $requestedBoilerplateTitle, $noParagraphIfEmpty ) {
-    global $wgTitle;
+    global $wgTitle, $wgbrUseLargeSelector;
+    
+    if ( $wgbrUseLargeSelector ) {
+      $style = "text-align: center; font-weight: bold; clear: both;";
+    } else {
+      $style = "text-align: right; font-weight: bold; font-size: smaller; clear: both;";
+    }
     
     if ( $wgTitle->exists() && $requestedBoilerplateTitle ) {
       // Not checking for ajax here, as if javascript is disabled on the 
       // client, that's also no ajax. Instead, the javascript will change the
       // message if the ajax selector was loaded.
-      return '<br /><p id="boilerRoomMessage">' . wfMsg( 'br-page-exists-noajax' ) . '</p>';
+      return '<br /><p id="boilerRoomMessage" style="' . $style . 
+             '">' . wfMsg( 'br-page-exists-noajax' ) . '</p>';
     } else if ( $requestedBoilerplateTitle ) {
-      return '<br /><p id="boilerRoomMessage">' . 
+      return '<br /><p id="boilerRoomMessage" style="' . $style . '">' . 
         wfMsg( 'br-loaded-on-new-page', $requestedBoilerplateTitle ) . '</p>';
     } else if ( $noParagraphIfEmpty ) {
       return '';  // no message to preload
     } else {
-      return '<br /><p id="boilerRoomMessage"></p>';
+      return '<br /><p id="boilerRoomMessage" style="' . $style .
+             '">' . wfMsg( 'br-selector-initial' ) . '</p>';
     }
   }
   
@@ -90,6 +104,7 @@ class BoilerRoomSelector {
     $output .= "var wgbrPrependMsg = '"  . wfMsg( 'br-prepend' ) . "';\n";
     $output .= "var wgbrAppendMsg = '"  . wfMsg( 'br-append' ) . "';\n";
     $output .= "var wgbrReplaceMsg = '"  . wfMsg( 'br-replace' ) . "';\n";
+    $output .= "var wgbrInsertMsg = '"  . wfMsg( 'br-insert' ) . "';\n";
     
     $output .= "</script>";
     return $output;
@@ -100,12 +115,13 @@ class BoilerRoomSelector {
    * content.
   */
   static function createAjaxSelectorScript( $titles, $requestedTitle ) {
-    global $wgResourceModules, $wgbrIncludes, $wgScriptPath, $wgTitle;
+    global $wgResourceModules, $wgbrIncludes, $wgbrUseLargeSelector, $wgScriptPath, $wgTitle;
     
     $legend = wfMsg( 'br-selector-legend' );
     $prepend = wfMsg( 'br-selector-prepend' );
     $append = wfMsg( 'br-selector-append' );
     $replace = wfMsg( 'br-selector-replace' );
+    $insert = wfMsg( 'br-selector-insert' );
     
     if ( class_exists( 'ResourceLoader', false ) ) {
       $wgResourceModules['ext.ajaxBoilerRoomSelector'] = array(
@@ -124,32 +140,68 @@ class BoilerRoomSelector {
       $displayMsg .= "\n". 'displayPageExistsMsg();';
     } 
     
-    $output =<<<ENDSTARTFORM
+    if ( $wgbrUseLargeSelector ) {
+      $output =<<<ENDSTARTFORM
 {$extScriptTag}<script type="text/javascript">{$resourceLoad}{$displayMsg}
 var boilerRoomSelectorContainer = document.getElementById("boilerRoomSelectorContainer");
 boilerRoomSelectorContainer.innerHTML =
-  '<fieldset class="boilerRoomFieldSet">\\n' +
+  '<fieldset class="boilerRoomFieldSet" style="clear: both;">\\n' +
   '<legend>{$legend}</legend>\\n' +
   '<table class="boilerRoomSelector" style="width: 100%;"><tr>\\n' +
-  '<td style="padding: 0 2em 0 0; width: 50%;">\\n' +
-  '<select id="boilerRoomSelect" size="7" style="width: 100%;">\\n' +
+  '<td style="padding: 0 2em 0 0; width: 40%;">\\n' +
+  '<select id="boilerRoomSelect" size="6" style="width: 100%;">\\n' +
 ENDSTARTFORM;
+    } else {
+      $output =<<<ENDSTARTFORM
+{$extScriptTag}<script type="text/javascript">{$resourceLoad}{$displayMsg}
+var boilerRoomSelectorContainer = document.getElementById("boilerRoomSelectorContainer");
+boilerRoomSelectorContainer.innerHTML =
+  '<div style="float: right;" ><select id="boilerRoomSelect" size="1">\\n' +
+ENDSTARTFORM;
+    }
 
     $output .= self::optionsFromBoilerplateList( $titles, $requestedTitle );
     
-    $output .=<<<ENDFORM
+    if ( $wgbrUseLargeSelector ) {
+      $output .=<<<ENDFORM
   '</select>\\n' +
-  '</td><td style="padding: 0 0 0 2em; width: 50%;">\\n' +
+  '</td><td style="padding: 0 0 0 2em; width: 30%;">\\n' +
+  '<button class="boilerRoomButton" style="width: 100%;" ' +
+  'onclick="boilerplateFetch( boilerplateInsert );">{$insert}</button>\\n' +
+  '<button class="boilerRoomButton" style="width: 100%;" ' +
+  'onclick="boilerplateFetch( boilerplateReplace );">{$replace}</button>\\n' +
+  '</td><td style="padding: 0 0 0 2em; width: 30%;">\\n' +
   '<button class="boilerRoomButton" style="width: 100%;" ' +
   'onclick="boilerplateFetch( boilerplatePrepend );">{$prepend}</button>\\n' +
   '<button class="boilerRoomButton" style="width: 100%;" ' +
   'onclick="boilerplateFetch( boilerplateAppend );">{$append}</button>\\n' +
-  '<button class="boilerRoomButton" style="width: 100%;" ' +
-  'onclick="boilerplateFetch( boilerplateReplace );">{$replace}</button>\\n' +
   '</td></tr></table>\\n' +
   '</fieldset>';
 </script>
 ENDFORM;
+    } else {
+      $output .=<<<ENDFORM
+  '</select>\\n' +
+  '<img src="{$wgScriptPath}/extensions/BoilerRoom/images/button-insert.png" ' +
+  'alt="{$insert}" ' + 
+  'title="{$insert}" ' +
+  'onclick="boilerplateFetch( boilerplateInsert );">' +
+  '<img src="{$wgScriptPath}/extensions/BoilerRoom/images/button-prepend.png" ' +
+  'alt="{$prepend}" ' + 
+  'title="{$prepend}" ' +
+  'onclick="boilerplateFetch( boilerplatePrepend );">' + 
+  '<img src="{$wgScriptPath}/extensions/BoilerRoom/images/button-append.png" ' +
+  'alt="{$append}" ' + 
+  'title="{$append}" ' +
+  'onclick="boilerplateFetch( boilerplateAppend );">' + 
+  '<img src="{$wgScriptPath}/extensions/BoilerRoom/images/button-replace.png" ' +
+  'alt="{$replace}" ' + 
+  'title="{$replace}" ' +
+  'onclick="boilerplateFetch( boilerplateReplace );">' +
+  '</div>';
+</script>
+ENDFORM;
+    }
 
     return $output;
   }
@@ -173,7 +225,7 @@ ENDFORM;
       
     $output .=<<<ENDSTARTFORM
 <form action="{$submit}">
-  <fieldset class="boilerRoomFieldSet">
+  <fieldset class="boilerRoomFieldSet" style="clear: both;">
   <legend>{$legend}</legend>
   <table class="boilerRoomSelector" style="width: 100%;"><tr>
   <td style="padding: 0 2em 0 0; width: 50%;">

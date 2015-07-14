@@ -11,7 +11,7 @@
  * @link 
  *
  * @author Eyes <eyes@aeongarden.com>
- * @copyright Copyright © 2011 Eyes
+ * @copyright Copyright ï¿½ 2011 Eyes
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
@@ -21,11 +21,12 @@ if( !defined( 'MEDIAWIKI' ) ) die( 'Invalid entry point.' );
 // Extension credits.
 $wgExtensionCredits[ 'other' ][] = array(
   'name'           => 'BoilerRoom',
+  'url'            => 'http://www.mediawiki.org/wiki/Extension:BoilerRoom', 
   'description'    => 'Allows wiki users to create boilerplate text in the Boilerplate ' . 
                       'namespace which can then be used on new pages.',
   'descriptionmsg' => 'boilerroom-desc',
-  'author'         => 'Eyes',
-  'version'        => '0.93',
+  'author'         => '[http://www.mediawiki.org/wiki/User:OoEyes Shawn Bruckner]',
+  'version'        => '1.0',
 );
 
 $wgbrIncludes = dirname( __FILE__ ) . '/includes';
@@ -39,10 +40,17 @@ $wgbrIncludes = dirname( __FILE__ ) . '/includes';
  *       that create custom namespaces or have any custom namespaces of your own,
  *       unless, of course, they don't use indexes 450 or 451.
  *       Set this BEFORE including this file in LocalSettings.php!
- *       
  */
 if ( !isset( $wgbrNamespaceIndex ) )
   $wgbrNamespaceIndex = 450;
+
+/*
+ * $wgbrUseLargeSelector --
+ *       When set to true, this uses the large version of the four button selector
+ *       that sits over the standard toolbar.  The default is false.
+ */
+if ( !isset( $wgbrUseLargeSelector ) )
+  $wgbrUseLargeSelector = false;
 
 /**
  * Perform setup tasks.
