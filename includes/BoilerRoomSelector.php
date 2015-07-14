@@ -11,7 +11,7 @@
  * Otherwise, the one-button selector will only appear when editing a new page.
  *
  * @author Eyes <eyes@aeongarden.com>
- * @copyright Copyright � 2011 Eyes
+ * @copyright Copyright ? 2011 Eyes
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
@@ -34,7 +34,6 @@ class BoilerRoomSelector {
     $htmlOptions = self::optionsFromBoilerplateList( $titles,
                                                      BoilerplateNamespace::getRequestedBoilerplateTitle()
                                                    );
-    $jsonOptions = self::wikiEditorListFromBoilerplateList( $titles );
     
     $pageExists = $wgTitle->exists();
     $showExistenceMessage = $pageExists && (bool)$requestedBoilerplateTitle;
@@ -107,11 +106,10 @@ class BoilerRoomSelector {
    * @global string $wgScriptPath The path to the MediaWiki installation base folder.
    * @global OutputPage $wgOUt The output page object to add the static scripts to.
    * @param String $htmlOptions The list of boilerplates that can be selected in HTML format.
-   * @param String $jsonOptions The list of bollerplates that can be selected in a JSON format for WikiEditor.
    * @param bool $showExistenceMessage true to show the message that the page already exists.
    * @return string The dynamic HTML and Javascript needed for the selector.
    */
-  static private function createAjaxSelectorScript( $htmlOptions, $jsonOptions, $showExistenceMessage ) {
+  static private function createAjaxSelectorScript( $htmlOptions, $showExistenceMessage ) {
     global $wgbrUseLargeSelector, $wgScriptPath, $wgOut;
           
     $wgOut->addInlineScript("$(document).ready(function(){boilerRoom.addMessages({" .
@@ -129,7 +127,6 @@ class BoilerRoomSelector {
                             "useLargeSelector:" . ( $wgbrUseLargeSelector ? "true" : "false" ) . "," .
                             "showExistenceMessage:" . ( $showExistenceMessage ? "true" : "false" ) . "," .
                             "standardHtmlList:'" . $htmlOptions . "'," .
-                            "wikiEditorSelectList:" . $jsonOptions .
                             "});boilerRoom.initializeAjaxSelector();});" . Xml::closeElement( 'script' )
     );
     
@@ -215,19 +212,6 @@ class BoilerRoomSelector {
     }
     
     return $output;
-  }
-  
-  /**
-   * Converts an array of boilerplate titles into a JSON string for adding to a wikiEditor select.
-   * @param Array $titles The list of boilerplate titles to serve as options, sans namespace.
-   */
-  static private function wikiEditorListFromBoilerplateList( $titles ) {
-    foreach ( $titles as $title ) {
-      $items[] = "'" . str_replace( ' ', '_', $title ) . "':{'label':'" . $title . "'," .
-                 "'action':{'type':'callback','execute':function(){}}}";
-    }
-    
-    return "{" . implode( ',', $items ) . "}";
   }
 }
 
