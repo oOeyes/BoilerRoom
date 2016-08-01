@@ -16,13 +16,24 @@ class APIQueryBoilerplate extends APIBase {
   public function execute( ) {
     $this->params = $this->extractRequestParams();
     $result = $this->getResult();
+    $bpns = BoilerplateNamespace::getInstance();
     
-    $boilerplateContent = '';
     if ( isset( $this->params['title'] ) ) {
-      $boilerplateContent = BoilerplateNamespace::getBoilerplateContent( $this->params['title'] );
+      $boilerplatePage = $bpns->getBoilerplatePage( $this->params['title'] );
+      if ( $boilerplatePage !== null ) {
+        $content = $boilerplatePage->getBoilerplateContent();
+
+        if ( $content[BR_STANDARD_BP_CONTENT] !== null ) {
+          $result->addValue( Array( 'boilerplate' ), '*', $content[BR_STANDARD_BP_CONTENT] );
+        }
+        if ( $content[BR_OPENING_BP_CONTENT] !== null ) {
+          $result->addValue( Array( 'openboilerplate' ), '*', $content[BR_OPENING_BP_CONTENT] );
+        }
+        if ( $content[BR_CLOSING_BP_CONTENT] !== null ) {
+          $result->addValue( Array( 'closeboilerplate' ), '*', $content[BR_CLOSING_BP_CONTENT] );
+        }
+      }
     }
-    
-    $result->addValue( Array( 'boilerplate' ), '*', $boilerplateContent );
     
     $this->getMain()->setCacheMode( 'public' );
   }
@@ -51,8 +62,10 @@ class APIQueryBoilerplate extends APIBase {
    * @return Array A description of this module.
    */
   public function getDescription( ) {
-    return Array( 'Gets boilerplate content from pages using <boilerplate>',
-                  'Simply returns an empty value for pages not using the tag or for non-existant pages.');
+    return Array( 'Gets boilerplate content from pages using <boilerplate>, <openboilerplate>, and/or ' .
+                  '<closeboilerplate>',
+                  'Simply returns an empty value for pages not using the tag or for non-existant pages.'
+                );
   }
   
   /**
@@ -60,8 +73,6 @@ class APIQueryBoilerplate extends APIBase {
    * @return string A version string.
    */
   public function getVersion( ) {
-    return __CLASS__ . ': BoilerRoom 1.1';
+    return __CLASS__ . ': BoilerRoom 1.3';
   }
 }
-
-?>
