@@ -93,7 +93,9 @@ class BoilerplateTag {
     // Not actually overriding, just adding an extra step
     $template = call_user_func( $this->mTemplateCallback, $title, $parser );
     
-    $template['text'] = BoilerplatePage::renderContent( $template['text'] );
+    if ( is_string( $template['text'] ) ) {
+      $template['text'] = BoilerplatePage::renderContent( $template['text'] );
+    }
 
     return $template;
   }

@@ -1,0 +1,76 @@
+{
+  "name": "BoilerRoom",
+  "namemsg": "boilerroom-extensionname",
+	"type": "other",
+	"author": "[http://www.mediawiki.org/wiki/User:OoEyes Shawn Bruckner]",
+  "version": "1.31",
+	"url": "http://www.mediawiki.org/wiki/Extension:BoilerRoom",
+	"description": "Allows wiki users to create boilerplate text in the Boilerplate namespace which can then be used on new pages.",
+  "descriptionmsg": "boilerroom-desc",
+	"license-name": "GPL-2.0+",
+  "config": {
+    "_prefix": "wgbr",
+    "NamespaceIndex": 450,
+    "UseLargeSelector": false
+  },
+	"Hooks": {
+		"CanonicalNamespaces": "BoilerplateNamespace::initialize"
+	},
+  "ResourceModules": {
+    "ext.BoilerRoom.ajaxSelector": {
+      "position": "top",
+      "scripts": "modules/ajaxBoilerRoomSelector.js",
+      "messages": [
+        "br-page-exists-ajax",
+        "br-prepend",
+        "br-append",
+        "br-replace",
+        "br-insert",
+        "br-no-boilerplates",
+        "br-selector-legend",
+        "br-selector-insert",
+        "br-selector-replace",
+        "br-selector-prepend",
+        "br-selector-append",
+        "br-selector-edit",
+        "br-selector-create",
+        "br-replace-confirm"
+      ],
+      "dependencies": [
+        "mediawiki.jqueryMsg", 
+        "mediawiki.notify", 
+        "mediawiki.notification"
+      ]
+    }
+  },
+  "ResourceFileModulePaths": {
+    "localBasePath": "",
+    "remoteExtPath": "BoilerRoom"
+  },
+  "ExtensionMessagesFiles": {
+    "BoilerRoomMagic": "BoilerRoom.i18n.php",
+    "BoilerRoomAlias": "BoilerRoom.alias.php"
+  },
+  "MessagesDirs": {
+    "BoilerRoom": "i18n"
+  },
+  "SpecialPages" : {
+    "Boilerplate": "SpecialBoilerplate"
+  },
+  "APIModules" : {
+    "boilerplate" : "ApiQueryBoilerplate"
+  },
+  "AutoloadClasses": {
+    "BoilerRoomInit": "includes/BoilerRoomInit.php",
+    "BoilerplateNamespace": "includes/BoilerplateNamespace.php",
+    "ApiQueryBoilerplate": "includes/ApiQueryBoilerplate.php",
+    "BoilerplateTag": "includes/BoilerplateTag.php",
+    "BoilerplatePage": "includes/BoilerplatePage.php",
+    "BoilerRoomBox": "includes/BoilerRoomBox.php",
+    "BoilerRoomBoxHooks": "includes/BoilerRoomBoxHooks.php",
+    "SpecialBoilerplate": "includes/SpecialBoilerplate.php",
+    "BoilerRoomSelector": "includes/BoilerRoomSelector.php"
+  },
+  "callback": "BoilerRoomInit::onRegistration",
+	"manifest_version": 1
+}

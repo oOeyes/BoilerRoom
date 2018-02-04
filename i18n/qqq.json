@@ -5,6 +5,7 @@
     ]
   },
   "boilerroom"               : "The name of the extension's entry in Special:SpecialPages",
+  "boilerroom-extensionname" : "The name of the extension",
   "boilerroom-desc"          : "{{desc}}",
   "boilerplate-special"      : "The page title for Special:Boilerplate.",
   "br-default-box-label"     : "Default label for boilerroombox edit button.",

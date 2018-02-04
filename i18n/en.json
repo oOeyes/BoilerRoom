@@ -5,6 +5,7 @@
     ]
   },
   "boilerroom"               : "BoilerRoom",
+  "boilerroom-extensionname" : "BoilerRoom",
   "boilerroom-desc"          : "Allows wiki users to create boilerplate text in the Boilerplate namespace which can then be used on new pages.",
   "boilerplate-special"      : "Manage boilerplates",
   "br-default-box-label"     : "Edit",

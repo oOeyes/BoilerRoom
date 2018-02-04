@@ -8,7 +8,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
-class APIQueryBoilerplate extends APIBase {
+class ApiQueryBoilerplate extends APIBase {
   
   /**
    * Executes the API request for given boilerplate content.
@@ -23,14 +23,14 @@ class APIQueryBoilerplate extends APIBase {
       if ( $boilerplatePage !== null ) {
         $content = $boilerplatePage->getBoilerplateContent();
 
-        if ( $content[BR_STANDARD_BP_CONTENT] !== null ) {
-          $result->addValue( Array( 'boilerplate' ), '*', $content[BR_STANDARD_BP_CONTENT] );
+        if ( $content[BoilerplatePage::standardContent] !== null ) {
+          $result->addValue( Array( 'boilerplate' ), '*', $content[BoilerplatePage::standardContent] );
         }
-        if ( $content[BR_OPENING_BP_CONTENT] !== null ) {
-          $result->addValue( Array( 'openboilerplate' ), '*', $content[BR_OPENING_BP_CONTENT] );
+        if ( $content[BoilerplatePage::openingContent] !== null ) {
+          $result->addValue( Array( 'openboilerplate' ), '*', $content[BoilerplatePage::openingContent] );
         }
-        if ( $content[BR_CLOSING_BP_CONTENT] !== null ) {
-          $result->addValue( Array( 'closeboilerplate' ), '*', $content[BR_CLOSING_BP_CONTENT] );
+        if ( $content[BoilerplatePage::closingContent] !== null ) {
+          $result->addValue( Array( 'closeboilerplate' ), '*', $content[BoilerplatePage::closingContent] );
         }
       }
     }
@@ -73,6 +73,6 @@ class APIQueryBoilerplate extends APIBase {
    * @return string A version string.
    */
   public function getVersion( ) {
-    return __CLASS__ . ': BoilerRoom 1.3';
+    return __CLASS__ . ': BoilerRoom 1.3.1';
   }
 }

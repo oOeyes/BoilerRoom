@@ -188,7 +188,7 @@ var boilerRoom = boilerRoom || {
    * an empty string if none is selected.
    */
   getSelectedTitle : function() {
-    return $("#boilerRoomSelect").children("option").filter(":selected").text()
+    return $("#boilerRoomSelect").children("option").filter(":selected").text();
   },
 
   /**
@@ -281,8 +281,8 @@ var boilerRoom = boilerRoom || {
 
   /**
    * Performs the steps needed to insert text at the cursor position in a textarea.
-   * @param {element} The textarea element to insert text into.
-   * @param {string} The text to insert into the textarea.
+   * @param {element} textarea The textarea element to insert text into.
+   * @param {string} content The text to insert into the textarea.
    */
   insertAtCursor : function( textarea, content ) {
     var selection, start, end, insertText;

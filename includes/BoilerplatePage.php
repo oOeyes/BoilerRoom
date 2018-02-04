@@ -17,6 +17,30 @@
 
 class BoilerplatePage {
   /**
+   * Identifies a section of the page not within actual boilerplate content.
+   * @var int meta 
+   */
+  const metaContent = 0;
+  
+  /**
+   * Identifies that this section of the page is within a standard boilerplate.
+   * @var int
+   */
+  const standardContent = 1;
+  
+  /**
+   * Identifies that this section of the page in within the opening portion of a wrapping boilerplate.
+   * @var int
+   */
+  const openingContent = 2;
+  
+  /**
+   * Identifies that this section of the page in within the closeing portion of a wrapping boilerplate.
+   * @var int
+   */
+  const closingContent = 3;
+  
+  /**
    * The content of the page divided into sections. Each element has array with "type" and "content".
    * @var string
    */
@@ -34,21 +58,21 @@ class BoilerplatePage {
    */
   private static function initializeTags( ) {
     if ( self::$mTags === null ) {
-      self::$mTags = Array( BR_STANDARD_BP_CONTENT => Array( 'openText' => '<boilerplate>',
-                                                             'openLength' => 13,
-                                                             'closeText' => '</boilerplate>',
-                                                             'closeLength' => 14,
-                                                           ),
-                            BR_OPENING_BP_CONTENT => Array( 'openText' => '<openboilerplate>',
-                                                            'openLength' => 17,
-                                                            'closeText' => '</openboilerplate>',
-                                                            'closeLength' => 18,
-                                                          ),
-                            BR_CLOSING_BP_CONTENT => Array( 'openText' => '<closeboilerplate>',
-                                                            'openLength' => 18,
-                                                            'closeText' => '</closeboilerplate>',
-                                                            'closeLength' => 19,
-                                                          ),
+      self::$mTags = Array( self::standardContent => Array( 'openText' => '<boilerplate>',
+                                                            'openLength' => 13,
+                                                            'closeText' => '</boilerplate>',
+                                                            'closeLength' => 14,
+                                                        ),
+                            self::openingContent => Array( 'openText' => '<openboilerplate>',
+                                                           'openLength' => 17,
+                                                           'closeText' => '</openboilerplate>',
+                                                           'closeLength' => 18,
+                                                       ),
+                            self::closingContent => Array( 'openText' => '<closeboilerplate>',
+                                                           'openLength' => 18,
+                                                           'closeText' => '</closeboilerplate>',
+                                                           'closeLength' => 19,
+                                                       ),
                           );
     }
   }
@@ -70,7 +94,7 @@ class BoilerplatePage {
    */
   public function hasBoilerplateContent() {
     foreach ( $this->mSections as $section ) {
-      if ( $section['type'] !== BR_NON_BP_CONTENT && 
+      if ( $section['type'] !== self::metaContent && 
            $section['content'] !== null && 
            trim( $section['content'] ) !== '' 
          ) {
@@ -86,7 +110,7 @@ class BoilerplatePage {
    * @return string The content within the <boilerplate> tag according to its processing rules.
    */
   public function getStandardContent( ) {
-    return $this->getContent( BR_STANDARD_BP_CONTENT );
+    return $this->getContent( self::standardContent );
   }
   
   /**
@@ -94,7 +118,7 @@ class BoilerplatePage {
    * @return string The content within the <openboilerplate> tag according to its processing rules.
    */
   public function getOpeningContent( ) {
-    return $this->getContent( BR_OPENING_BP_CONTENT );
+    return $this->getContent( self::openingContent );
   }
   
   /**
@@ -102,12 +126,12 @@ class BoilerplatePage {
    * @return string The content within the <closeboilerplate> tag according to its processing rules.
    */
   public function getClosingContent( ) {
-    return $this->getContent( BR_CLOSING_BP_CONTENT );
+    return $this->getContent( self::closingContent );
   }
   
   /**
    * Returns the boilerplate content within the appropriate tag.
-   * @param int $type BR_STANDARD_BP_CONTENT, BR_OPENING_BP_CONTENT, or BR_CLOSING_BP_CONTENT
+   * @param int $type One of these class constants: standardContent, openingContent, or closingContent
    * @return string The content within the appropriate tag according to its processing rules or null if there is none.
    */
   public function getContent( $type ) {
@@ -125,10 +149,10 @@ class BoilerplatePage {
    * @return Array Array indexed by the BR_?_BP_CONTENT constants with content or null if that section has none.
    */
   public function getBoilerplateContent() {
-    $content = Array( BR_OPENING_BP_CONTENT => null, BR_OPENING_BP_CONTENT => null, BR_CLOSING_BP_CONTENT => null );
+    $content = Array( self::openingContent => null, self::openingContent => null, self::closingContent => null );
     
     foreach ( $this->mSections as $section ) {
-      if ( $section['type'] !== BR_NON_BP_CONTENT && $section['content'] !== null ) {
+      if ( $section['type'] !== self::metaContent && $section['content'] !== null ) {
         $content[$section['type']] = $section['content'];
       }
     }
@@ -144,14 +168,14 @@ class BoilerplatePage {
     $sections = $this->getBoilerplateContent();
     
     $content = '';
-    if ( array_key_exists( BR_OPENING_BP_CONTENT, $sections ) && $sections[BR_OPENING_BP_CONTENT] !== null ) {
-      $content .= $sections[BR_OPENING_BP_CONTENT];
+    if ( array_key_exists( self::openingContent, $sections ) && $sections[self::openingContent] !== null ) {
+      $content .= $sections[self::openingContent];
     }
-    if ( array_key_exists( BR_STANDARD_BP_CONTENT, $sections ) && $sections[BR_STANDARD_BP_CONTENT] !== null ) {
-      $content .= $sections[BR_STANDARD_BP_CONTENT];
+    if ( array_key_exists( self::standardContent, $sections ) && $sections[self::standardContent] !== null ) {
+      $content .= $sections[self::standardContent];
     }
-    if ( array_key_exists( BR_CLOSING_BP_CONTENT, $sections ) && $sections[BR_CLOSING_BP_CONTENT] !== null ) {
-      $content .= $sections[BR_CLOSING_BP_CONTENT];
+    if ( array_key_exists( self::closingContent, $sections ) && $sections[self::closingContent] !== null ) {
+      $content .= $sections[self::closingContent];
     }
     return $content;
   }
@@ -165,7 +189,7 @@ class BoilerplatePage {
   public function getRenderedContent( ) {    
     $text = "";
     for ( $i = 0; $i < count( $this->mSections ); ++$i ) {
-      if ( $this->mSections[$i]['type'] === BR_NON_BP_CONTENT ) {
+      if ( $this->mSections[$i]['type'] === self::metaContent ) {
         $text .= $this->mSections[$i]['content'];
       } else {
         $text .= "\n <nowiki>" . htmlspecialchars( $this->mSections[$i]['content'] ) . "</nowiki>";
@@ -199,7 +223,7 @@ class BoilerplatePage {
       $pos = 0; // skipping tags without newlines in them, so need to remember where we leave off
       if ( count( $tags ) > 0 ) {
         if ( $tags[0]['openPos'] > 0 ) {
-          $this->mSections[] = Array( 'type' => BR_NON_BP_CONTENT, 
+          $this->mSections[] = Array( 'type' => self::metaContent, 
                                       'content' => substr( $text, 0, $tags[0]['openPos'] )
                                     ); 
           $pos = $tags[0]['openPos'] + self::$mTags[$tags[0]['type']]['openLength']; 
@@ -217,7 +241,7 @@ class BoilerplatePage {
           $pos = $tags[$i]['closePos'] + $tagInfo['closeLength'];
           
           if ( $i < count( $tags ) - 1 ) {
-            $this->mSections[] = Array( 'type' => BR_NON_BP_CONTENT,
+            $this->mSections[] = Array( 'type' => self::metaContent,
                                         'content' => substr( $text, $pos, $tags[$i + 1]['openPos'] - $pos ),
                                       );
           }
@@ -225,7 +249,7 @@ class BoilerplatePage {
       }
       
       if ( $pos < strlen( $text ) ) {
-        $this->mSections[] = Array( 'type' => BR_NON_BP_CONTENT,
+        $this->mSections[] = Array( 'type' => self::metaContent,
                                     'content' => substr( $text, $pos, strlen( $text ) - $pos ),
                                   );
       }

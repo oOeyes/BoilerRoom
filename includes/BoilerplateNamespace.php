@@ -42,18 +42,15 @@ class BoilerplateNamespace {
   }
   
   /**
-   * Sets up the Boilerplate namespace.
+   * Sets up the Boilerplate namespace when called on the CanonicalNamespaces hook.
+   * @param Array Array of namespace names by index.
    * @global int $wgbrNamespaceIndex The index for the Boilerplate namespace.
-   * @global Array $wgExtraNamespaces The MediaWiki configuration array that configures custom namespaces.
    */
-  public function initialize( ) {
-    global $wgbrNamespaceIndex, $wgExtraNamespaces;
+  public static function initialize( &$namespaces ) {
+    global $wgbrNamespaceIndex;
     
-    define("NS_BOILERPLATE", $wgbrNamespaceIndex);
-    define("NS_BOILERPLATE_TALK", $wgbrNamespaceIndex + 1);
-    
-    $wgExtraNamespaces[NS_BOILERPLATE] = "Boilerplate";
-    $wgExtraNamespaces[NS_BOILERPLATE_TALK] = "Boilerplate_talk";
+    $namespaces[NS_BOILERPLATE] = "Boilerplate";
+    $namespaces[NS_BOILERPLATE_TALK] = "Boilerplate_talk";
   }
   
   /**
