@@ -1,20 +1,22 @@
 var boilerRoom = boilerRoom || {
   messageTimerId : null,
-  
+
   /**
    * Main function for initializing the BoilerRoom selector.
    */
   initializeAjaxSelector : function() {
     mw.loader.using( 'user.options', function() {
       if ( mw.user.options.get( 'usebetatoolbar' ) ) {
-        mw.loader.using( 'ext.wikiEditor.toolbar', function() {
+        $.when(
+				  mw.loader.using( 'ext.wikiEditor' ), $.ready
+			  ).then( function () {
           $( '#wikiEditor-ui-toolbar' ).prepend(
             '<div id="boilerRoomSelectorContainer" style="float: right; line-height: 22px; margin: 5px;"></div>');
           boilerRoom.continueInitializeAjaxSelector();
         } );
       } else {
         if ( $( '#toolbar' ).length > 0 ) {
-          $( '#toolbar' ).append('<div id="boilerRoomSelectorContainer"></div>');   
+          $( '#toolbar' ).append('<div id="boilerRoomSelectorContainer" style="margin-top: -22px;"></div>');
         } else {
           $( '#wpTextbox1' ).before('<div id="boilerRoomSelectorContainer"></div>');
         }
@@ -22,7 +24,7 @@ var boilerRoom = boilerRoom || {
       }
     } );
   },
-  
+
   /**
    * Continues the initialization work after the selector container is correctly placed.
    */
@@ -53,7 +55,7 @@ var boilerRoom = boilerRoom || {
       }
       messageBox.appendTo( '#boilerRoomSelectorContainer' );
     }
-    
+
     var initialMessage = mw.config.get( 'wgbrInitialMessage' );
     if ( initialMessage !== '' ) {
       boilerRoom.displayMessage( initialMessage );
@@ -69,27 +71,27 @@ var boilerRoom = boilerRoom || {
       $( '#boilerRoomSelectorContainer' ).html(
         '<div style="float: right;" ><select id="boilerRoomSelect" size="1">' + htmlOptions + '</select>' +
         '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-insert.png" ' +
-        'alt="' + mw.message( 'br-selector-insert' ).escaped() + '" ' + 
+        'alt="' + mw.message( 'br-selector-insert' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-insert' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateInsert );">' +
         '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-prepend.png" ' +
-        'alt="' + mw.message( 'br-selector-prepend' ).escaped() + '" ' + 
+        'alt="' + mw.message( 'br-selector-prepend' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-prepend' ).escaped() + '" ' +
-        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplatePrepend );">' + 
+        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplatePrepend );">' +
         '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-append.png" ' +
-        'alt="' + mw.message( 'br-selector-append' ).escaped() + '" ' + 
+        'alt="' + mw.message( 'br-selector-append' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-append' ).escaped() + '" ' +
-        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateAppend );">' + 
+        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateAppend );">' +
         '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-replace.png" ' +
-        'alt="' + mw.message( 'br-selector-replace' ).escaped() + '" ' + 
+        'alt="' + mw.message( 'br-selector-replace' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-replace' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateReplace );">' +
         '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-edit.png" ' +
-        'alt="' + mw.message( 'br-selector-edit' ).escaped() + '" ' + 
+        'alt="' + mw.message( 'br-selector-edit' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-edit' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateEdit( );">' +
         '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-create.png" ' +
-        'alt="' + mw.message( 'br-selector-create' ).escaped() + '" ' + 
+        'alt="' + mw.message( 'br-selector-create' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-create' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateCreate( );">' +
         '</div>'
@@ -97,8 +99,8 @@ var boilerRoom = boilerRoom || {
     } else {
       $( '#boilerRoomSelectorContainer' ).html(
         '<div style="float: right;" >'+
-        '<a onclick="boilerRoom.boilerplateCreate( );" style="cursor: pointer;"' + 
-        'title="' + mw.message( 'br-no-boilerplates' ).escaped() + '">' + 
+        '<a onclick="boilerRoom.boilerplateCreate( );" style="cursor: pointer;"' +
+        'title="' + mw.message( 'br-no-boilerplates' ).escaped() + '">' +
         mw.message( 'br-selector-create' ).escaped() + '</a>' +
         '</div>'
       );
@@ -120,27 +122,27 @@ var boilerRoom = boilerRoom || {
         '</select>' +
         '</td><td style="padding: 0 0 0 2em; width: 30%;">' +
         '<button class="boilerRoomButton" style="width: 100%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateInsert );">' + 
-        mw.message( 'br-selector-insert' ).escaped() + 
+        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateInsert );">' +
+        mw.message( 'br-selector-insert' ).escaped() +
         '</button>' +
         '<button class="boilerRoomButton" style="width: 100%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateReplace );">' + 
-        mw.message( 'br-selector-replace' ).escaped() + 
+        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateReplace );">' +
+        mw.message( 'br-selector-replace' ).escaped() +
         '</button>' +
         '</td><td style="padding: 0 0 0 2em; width: 30%;">' +
         '<button class="boilerRoomButton" style="width: 100%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplatePrepend );">' + 
+        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplatePrepend );">' +
         mw.message( 'br-selector-prepend' ).escaped() +
         '</button>' +
         '<button class="boilerRoomButton" style="width: 100%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateAppend );">' + 
-        mw.message( 'br-selector-append' ).escaped() + 
+        'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateAppend );">' +
+        mw.message( 'br-selector-append' ).escaped() +
         '</button>' +
         '<button class="boilerRoomButton" style="width: 100%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateEdit( );">' + mw.message( 'br-selector-edit' ).escaped() + 
+        'onclick="boilerRoom.boilerplateEdit( );">' + mw.message( 'br-selector-edit' ).escaped() +
         '</button>' +
         '<button class="boilerRoomButton" style="width: 100%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateCreate( );">' + mw.message( 'br-selector-create' ).escaped() + 
+        'onclick="boilerRoom.boilerplateCreate( );">' + mw.message( 'br-selector-create' ).escaped() +
         '</button>' +
         '</td></tr></table>' +
         '</fieldset>'
@@ -153,14 +155,14 @@ var boilerRoom = boilerRoom || {
         '<td style="padding: 0 2em 0 0; width: 100%; text-align: center;">' +
         '<p>' + mw.message( 'br-no-boilerplates' ).escaped() + '</p>' +
         '<button class="boilerRoomButton" style="width: 30%;" type="button" ' +
-        'onclick="boilerRoom.boilerplateCreate( );">' + mw.message( 'br-selector-create' ).escaped() + 
+        'onclick="boilerRoom.boilerplateCreate( );">' + mw.message( 'br-selector-create' ).escaped() +
         '</button>' +
         '</td></tr></table>' +
         '</fieldset>'
       );
     }
   },
-  
+
   /**
    * Displays a message above the selector for a short while.
    * @param {string} text The message to display.
@@ -169,12 +171,12 @@ var boilerRoom = boilerRoom || {
     if ( boilerRoom.messageTimerId !== null ) {
       window.clearTimeout( boilerRoom.messageTimerId );
     }
-    
+
     var messageBox = $( '#boilerRoomMessage' );
     if ( text !== null && text !== '' ) {
       messageBox.html( text );
     }
-    
+
     if ( messageBox.html() !== '' ) {
       messageBox.show();
       window.setTimeout( function() {
@@ -211,7 +213,7 @@ var boilerRoom = boilerRoom || {
   },
 
   /**
-   * Raises a confirmation dialog for replacement and returns the result. Simply returns true for inserting, prepending, 
+   * Raises a confirmation dialog for replacement and returns the result. Simply returns true for inserting, prepending,
    * and appending.
    * @param {function} target The target function, used to identify if confirmation should be automatic.
    */
@@ -302,9 +304,9 @@ var boilerRoom = boilerRoom || {
       start = textarea[0].selectionStart;
       end = textarea[0].selectionEnd;
       insertText = boilerRoom.createInsertText( content, textarea.val().substring( start, end ) );
-      textarea.val( textarea.val().substring( 0, start ) + 
-                    insertText.text + 
-                    textarea.val().substring( end, textarea.val().length ) 
+      textarea.val( textarea.val().substring( 0, start ) +
+                    insertText.text +
+                    textarea.val().substring( end, textarea.val().length )
                   );
       boilerRoom.selectRange( textarea, start + insertText.selectionStart, start + insertText.selectionEnd );
     } else {
@@ -314,7 +316,7 @@ var boilerRoom = boilerRoom || {
       boilerRoom.selectRange( textarea, start + insertText.selectionStart, start + insertText.selectionEnd );
     }
   },
-  
+
   /**
    * Selects a given range of text in a textarea.
    * @param {element} textarea The textarea element to select text within.
@@ -352,7 +354,7 @@ var boilerRoom = boilerRoom || {
     }
     return content;
   },
-  
+
   /**
    * Creates the text to insert from returned boilerplate content from an AJAX call to the boilerplate API.
    * @param {object} jsonData The json data returned by an AJAX call to the boilerplate API.
@@ -362,7 +364,7 @@ var boilerRoom = boilerRoom || {
   createInsertText : function( jsonData, selectedText ) {
     var content = boilerRoom.getBoilerplateContent( jsonData );
     var insertText = { text : '', selectionStart : 0, selectionEnd : 0 };
-    
+
     if ( typeof( content.openboilerplate ) !== "undefined" ) {
       insertText.text += content.openboilerplate;
       insertText.selectionEnd = insertText.selectionStart = content.openboilerplate.length;
@@ -381,10 +383,10 @@ var boilerRoom = boilerRoom || {
     if ( typeof( content.closeboilerplate ) !== "undefined" ) {
       insertText.text += content.closeboilerplate;
     }
-    
+
     return insertText;
   },
-  
+
   /**
    * Gets the text to insert from returned boilerplate content from an AJAX call to the boilerplate API.
    * @param {object} jsonData The json data returned by an AJAX call to the boilerplate API.
@@ -400,9 +402,9 @@ var boilerRoom = boilerRoom || {
   boilerplateEdit : function ( ) {
     var title = boilerRoom.getSelectedTitle();
     if ( title !== '' ) {
-      var url = mw.config.get( 'wgScriptPath' ) + 
-                "/index.php?title=Boilerplate:" + 
-                encodeURIComponent( title ) + 
+      var url = mw.config.get( 'wgScriptPath' ) +
+                "/index.php?title=Boilerplate:" +
+                encodeURIComponent( title ) +
                 "&action=edit";
       var win = window.open( url, '_blank' );
       if ( win ) {
@@ -412,7 +414,7 @@ var boilerRoom = boilerRoom || {
       }
     }
   },
-  
+
   /**
    * Opens the Special:Boilerplate page.
    */

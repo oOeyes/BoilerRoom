@@ -3,7 +3,7 @@
   "namemsg": "boilerroom-extensionname",
 	"type": "other",
 	"author": "[http://www.mediawiki.org/wiki/User:OoEyes Shawn Bruckner]",
-  "version": "1.31",
+  "version": "1.3.2",
 	"url": "http://www.mediawiki.org/wiki/Extension:BoilerRoom",
 	"description": "Allows wiki users to create boilerplate text in the Boilerplate namespace which can then be used on new pages.",
   "descriptionmsg": "boilerroom-desc",
