@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"eduaddad"
+		]
+	},
+	"boilerplate-special": "Gerenciar boilerplates",
+	"br-boilerplate-list": "Lista de boilerplates",
+	"br-boilerplate-list-none": "Estes não são boilerplates existentes dentro do espaço para nome Boilerplate."
+}
