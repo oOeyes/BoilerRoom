@@ -41,5 +41,6 @@
   "br-replace"               : "Text from \"$1\" used to replace existing text.",
   "br-no-boilerplates"       : "There are no boilerplates available in the boilerplate namespace. If any are created, they will be available here.",
   "br-load-boilerplate"      : "Load boilerplate",
-  "br-tag-error"             : "BoilerRoom error: malformatted tags. Possible causes: There may be a missing closing tag, the opening and closing tags could be on the same line, or content between different boilerplate tags may be overlapping."
+  "br-tag-error"             : "BoilerRoom error: malformatted tags. Possible causes: There may be a missing closing tag, the opening and closing tags could be on the same line, or content between different boilerplate tags may be overlapping.",
+  "apihelp-boilerplate-summary": "Allows wiki users to create boilerplate text in the Boilerplate namespace which can then be used on new pages."
 }
