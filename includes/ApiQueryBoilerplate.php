@@ -73,6 +73,6 @@ class ApiQueryBoilerplate extends APIBase {
    * @return string A version string.
    */
   public function getVersion( ) {
-    return __CLASS__ . ': BoilerRoom 1.3.3';
+    return __CLASS__ . ': BoilerRoom 1.3.4';
   }
 }
