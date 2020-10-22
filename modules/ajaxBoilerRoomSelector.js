@@ -70,27 +70,27 @@ var boilerRoom = boilerRoom || {
     if ( htmlOptions !== '' ) {
       $( '#boilerRoomSelectorContainer' ).html(
         '<div style="float: right;" ><select id="boilerRoomSelect" size="1">' + htmlOptions + '</select>' +
-        '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-insert.png" ' +
+        '<img src="' + mw.config.get( 'wgExtensionAssetsPath' ) + '/BoilerRoom/images/button-insert.png" ' +
         'alt="' + mw.message( 'br-selector-insert' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-insert' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateInsert );">' +
-        '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-prepend.png" ' +
+        '<img src="' + mw.config.get( 'wgExtensionAssetsPath' ) + '/BoilerRoom/images/button-prepend.png" ' +
         'alt="' + mw.message( 'br-selector-prepend' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-prepend' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplatePrepend );">' +
-        '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-append.png" ' +
+        '<img src="' + mw.config.get( 'wgExtensionAssetsPath' ) + '/BoilerRoom/images/button-append.png" ' +
         'alt="' + mw.message( 'br-selector-append' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-append' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateAppend );">' +
-        '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-replace.png" ' +
+        '<img src="' + mw.config.get( 'wgExtensionAssetsPath' ) + '/BoilerRoom/images/button-replace.png" ' +
         'alt="' + mw.message( 'br-selector-replace' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-replace' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateFetch( boilerRoom.boilerplateReplace );">' +
-        '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-edit.png" ' +
+        '<img src="' + mw.config.get( 'wgExtensionAssetsPath' ) + '/BoilerRoom/images/button-edit.png" ' +
         'alt="' + mw.message( 'br-selector-edit' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-edit' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateEdit( );">' +
-        '<img src="' + mw.config.get( 'wgScriptPath' ) + '/extensions/BoilerRoom/images/button-create.png" ' +
+        '<img src="' + mw.config.get( 'wgExtensionAssetsPath' ) + '/BoilerRoom/images/button-create.png" ' +
         'alt="' + mw.message( 'br-selector-create' ).escaped() + '" ' +
         'title="' + mw.message( 'br-selector-create' ).escaped() + '" ' +
         'onclick="boilerRoom.boilerplateCreate( );">' +
